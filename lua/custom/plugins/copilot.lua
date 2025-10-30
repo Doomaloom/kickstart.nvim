@@ -83,6 +83,13 @@ return {
       mode = { 'n', 'x' },
       desc = 'Sidekick Select Prompt',
     },
+    {
+      '<leader>ag', -- You can change 'ag' to whatever you like
+      function()
+        require('sidekick.cli').toggle { name = 'gemini', focus = true }
+      end,
+      desc = 'Sidekick Toggle Gemini',
+    },
     -- Example of a keybinding to open Claude directly
     {
       '<leader>ac',
