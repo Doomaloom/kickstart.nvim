@@ -15,7 +15,16 @@ return {
         keymap = {
           preset = 'default',
           ['<CR>'] = { 'accept', 'fallback' },
-          ['<Tab>'] = { 'select_next', 'fallback' },
+          ['<Tab>'] = {
+            'snippet_forward',
+            function()
+              return require('sidekick').nes_jump_or_aply()
+            end,
+            function()
+              return vim.lsp.inline_completion.get()
+            end,
+            'fallback',
+          },
           ['<S-Tab>'] = { 'select_prev', 'fallback' },
         },
       }
