@@ -92,11 +92,18 @@ return {
     },
     -- Example of a keybinding to open Claude directly
     {
-      '<leader>ac',
+      '<leader>al',
       function()
         require('sidekick.cli').toggle { name = 'claude', focus = true }
       end,
       desc = 'Sidekick Toggle Claude',
+    },
+    {
+      '<leader>ac', -- 'o' for OpenAI/Codex
+      function()
+        require('sidekick.cli').toggle { name = 'codex', focus = true }
+      end,
+      desc = 'Sidekick Toggle Codex (ChatGPT)',
     },
   },
 }
