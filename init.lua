@@ -298,7 +298,7 @@ require('lazy').setup({
   -- Then, because we use the `opts` key (recommended), the configuration runs
   -- after the plugin has been loaded as `require(MODULE).setup(opts)`.
 
-  {                     -- Useful plugin to show you pending keybinds.
+  { -- Useful plugin to show you pending keybinds.
     'folke/which-key.nvim',
     event = 'VimEnter', -- Sets the loading event to 'VimEnter'
     opts = {
@@ -379,7 +379,7 @@ require('lazy').setup({
       { 'nvim-telescope/telescope-ui-select.nvim' },
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
-      { 'nvim-tree/nvim-web-devicons',            enabled = vim.g.have_nerd_font },
+      { 'nvim-tree/nvim-web-devicons', enabled = vim.g.have_nerd_font },
     },
     config = function()
       -- Telescope is a fuzzy finder that comes with a lot of different things that
@@ -487,7 +487,7 @@ require('lazy').setup({
       'WhoIsSethDaniel/mason-tool-installer.nvim',
 
       -- Useful status updates for LSP.
-      { 'j-hui/fidget.nvim',    opts = {} },
+      { 'j-hui/fidget.nvim', opts = {} },
 
       -- Allows extra capabilities provided by blink.cmp
       'saghen/blink.cmp',
@@ -1018,11 +1018,24 @@ vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
 
 -- Codex inline ghost text completion.
-require("codex_ghost").setup({
-  cmd = "codex",
-  args = { "complete" },        -- adjust if your CLI needs a subcommand
-  stream_args = { "--stream" }, -- adjust if different
+require('codex_ghost').setup {
+  cmd = 'codex',
+  args = { 'complete' }, -- adjust if your CLI needs a subcommand
+  stream_args = { '--stream' }, -- adjust if different
   non_stream_args = {},
-})
+}
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+vim.api.nvim_create_autocmd('LspAttach', {
+  callback = function(event)
+    local map = function(keys, func, desc)
+      vim.keymap.set('n', keys, func, { buffer = event.buf, desc = 'LSP: ' .. desc })
+    end
+
+    map('gd', vim.lsp.buf.definition, 'Go to Definition')
+    map('gD', vim.lsp.buf.declaration, 'Go to Declaration')
+    map('gr', vim.lsp.buf.references, 'Go to References')
+    map('gi', vim.lsp.buf.implementation, 'Go to Implementation')
+    map('K', vim.lsp.buf.hover, 'Hover Documentation')
+  end,
+})
