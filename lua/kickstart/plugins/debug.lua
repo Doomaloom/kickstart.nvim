@@ -23,6 +23,7 @@ return {
 
     -- Add your own debuggers here
     'leoluz/nvim-dap-go',
+    'mxsdev/nvim-dap-vscode-js',
   },
   keys = {
     -- Basic debugging keymaps, feel free to change to your liking!
@@ -98,6 +99,11 @@ return {
       },
     }
 
+    require('dap-vscode-js').setup {
+      debugger_cmd = { 'js-debug-adapter' },
+      adapters = { 'pwa-node', 'pwa-chrome' },
+    }
+
     -- Dap UI setup
     -- For more information, see |:help nvim-dap-ui|
     dapui.setup {
@@ -144,5 +150,52 @@ return {
         detached = vim.fn.has 'win32' == 0,
       },
     }
+
+    local function browser_executable()
+      for _, executable in ipairs {
+        'chromium',
+        'google-chrome-stable',
+        'google-chrome',
+        'microsoft-edge-stable',
+      } do
+        local path = vim.fn.exepath(executable)
+        if path ~= '' then
+          return path
+        end
+      end
+    end
+
+    local javascript_configurations = {
+      {
+        type = 'pwa-chrome',
+        request = 'launch',
+        name = 'Angular: Launch Chromium',
+        url = 'http://localhost:4200',
+        webRoot = '${workspaceFolder}',
+        runtimeExecutable = browser_executable(),
+        sourceMaps = true,
+      },
+      {
+        type = 'pwa-node',
+        request = 'launch',
+        name = 'Node: Launch current file',
+        program = '${file}',
+        cwd = '${workspaceFolder}',
+        sourceMaps = true,
+        console = 'integratedTerminal',
+      },
+      {
+        type = 'pwa-node',
+        request = 'attach',
+        name = 'Node: Attach to process',
+        processId = require('dap.utils').pick_process,
+        cwd = '${workspaceFolder}',
+        sourceMaps = true,
+      },
+    }
+
+    for _, language in ipairs { 'javascript', 'javascriptreact', 'typescript', 'typescriptreact' } do
+      dap.configurations[language] = vim.list_extend(dap.configurations[language] or {}, javascript_configurations)
+    end
   end,
 }

@@ -344,6 +344,9 @@ require('lazy').setup({
 
       -- Document existing key chains
       spec = {
+        { '<leader>c', group = '[C]ode' },
+        { '<leader>o', group = '[O]verseer' },
+        { '<leader>r', group = '[R]un tests' },
         { '<leader>s', group = '[S]earch' },
         { '<leader>t', group = '[T]oggle' },
         { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
@@ -671,10 +674,86 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
-        -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        clangd = {},
+        gopls = {},
+        pyright = {},
+        rust_analyzer = {},
+        angularls = {
+          workspace_required = true,
+        },
+        vtsls = {
+          settings = {
+            vtsls = {
+              autoUseWorkspaceTsdk = true,
+              enableMoveToFileCodeAction = true,
+            },
+            typescript = {
+              updateImportsOnFileMove = 'always',
+              inlayHints = {
+                parameterNames = { enabled = 'literals' },
+                parameterTypes = { enabled = true },
+                variableTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                enumMemberValues = { enabled = true },
+              },
+              preferences = {
+                includePackageJsonAutoImports = 'auto',
+                importModuleSpecifier = 'shortest',
+              },
+            },
+            javascript = {
+              updateImportsOnFileMove = 'always',
+              inlayHints = {
+                parameterNames = { enabled = 'literals' },
+                parameterTypes = { enabled = true },
+                variableTypes = { enabled = true },
+                propertyDeclarationTypes = { enabled = true },
+                functionLikeReturnTypes = { enabled = true },
+                enumMemberValues = { enabled = true },
+              },
+            },
+          },
+        },
+        eslint = {},
+        html = {
+          filetypes = { 'html' },
+        },
+        cssls = {},
+        tailwindcss = {
+          workspace_required = true,
+          root_dir = function(bufnr, on_dir)
+            local filename = vim.api.nvim_buf_get_name(bufnr)
+            local config = vim.fs.find({
+              'tailwind.config.js',
+              'tailwind.config.cjs',
+              'tailwind.config.mjs',
+              'tailwind.config.ts',
+              'postcss.config.js',
+              'postcss.config.cjs',
+              'postcss.config.mjs',
+              'postcss.config.ts',
+            }, { path = filename, upward = true })[1]
+            if config then
+              on_dir(vim.fs.dirname(config))
+              return
+            end
+
+            for _, package_json in ipairs(vim.fs.find('package.json', { path = filename, upward = true })) do
+              local ok, package = pcall(vim.json.decode, table.concat(vim.fn.readfile(package_json), '\n'))
+              if ok and type(package) == 'table' then
+                local dependencies = vim.tbl_extend('force', package.dependencies or {}, package.devDependencies or {})
+                if dependencies.tailwindcss or dependencies['@tailwindcss/postcss'] or dependencies['@tailwindcss/vite'] then
+                  on_dir(vim.fs.dirname(package_json))
+                  return
+                end
+              end
+            end
+          end,
+        },
+        emmet_language_server = {
+          filetypes = { 'css', 'html', 'htmlangular', 'less', 'sass', 'scss' },
+        },
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -715,24 +794,22 @@ require('lazy').setup({
       -- for you, so that they are available from within Neovim.
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
+        'prettierd',
+        'js-debug-adapter',
         'stylua', -- Used to format Lua code
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
       require('mason-lspconfig').setup {
         ensure_installed = {}, -- explicitly set to an empty table (Kickstart populates installs via mason-tool-installer)
-        automatic_installation = false,
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- This handles overriding only values explicitly passed
-            -- by the server configuration above. Useful when disabling
-            -- certain features of an LSP (for example, turning off formatting for ts_ls)
-            server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
-            require('lspconfig')[server_name].setup(server)
-          end,
-        },
+        automatic_enable = false,
       }
+
+      for server_name, server in pairs(servers) do
+        server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
+        vim.lsp.config(server_name, server)
+        vim.lsp.enable(server_name)
+      end
     end,
   },
 
@@ -761,18 +838,25 @@ require('lazy').setup({
           return nil
         else
           return {
-            timeout_ms = 500,
+            timeout_ms = 1000,
             lsp_format = 'fallback',
           }
         end
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use 'stop_after_first' to run the first available formatter from the list
-        -- javascript = { "prettierd", "prettier", stop_after_first = true },
+        javascript = { 'prettier', 'prettierd', stop_after_first = true },
+        javascriptreact = { 'prettier', 'prettierd', stop_after_first = true },
+        typescript = { 'prettier', 'prettierd', stop_after_first = true },
+        typescriptreact = { 'prettier', 'prettierd', stop_after_first = true },
+        html = { 'prettier', 'prettierd', stop_after_first = true },
+        htmlangular = { 'prettier', 'prettierd', stop_after_first = true },
+        css = { 'prettier', 'prettierd', stop_after_first = true },
+        scss = { 'prettier', 'prettierd', stop_after_first = true },
+        json = { 'prettier', 'prettierd', stop_after_first = true },
+        jsonc = { 'prettier', 'prettierd', stop_after_first = true },
+        yaml = { 'prettier', 'prettierd', stop_after_first = true },
+        markdown = { 'prettier', 'prettierd', stop_after_first = true },
       },
     },
   },
@@ -796,15 +880,12 @@ require('lazy').setup({
           return 'make install_jsregexp'
         end)(),
         dependencies = {
-          -- `friendly-snippets` contains a variety of premade snippets.
-          --    See the README about individual language/framework/plugin snippets:
-          --    https://github.com/rafamadriz/friendly-snippets
-          -- {
-          --   'rafamadriz/friendly-snippets',
-          --   config = function()
-          --     require('luasnip.loaders.from_vscode').lazy_load()
-          --   end,
-          -- },
+          {
+            'rafamadriz/friendly-snippets',
+            config = function()
+              require('luasnip.loaders.from_vscode').lazy_load()
+            end,
+          },
         },
         opts = {},
       },
@@ -944,7 +1025,28 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = {
+        'angular',
+        'bash',
+        'c',
+        'css',
+        'diff',
+        'html',
+        'javascript',
+        'jsdoc',
+        'json',
+        'jsonc',
+        'lua',
+        'luadoc',
+        'markdown',
+        'markdown_inline',
+        'query',
+        'scss',
+        'tsx',
+        'typescript',
+        'vim',
+        'vimdoc',
+      },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
