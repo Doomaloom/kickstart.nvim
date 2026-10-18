@@ -33,6 +33,27 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
     {
+        'lewis6991/gitsigns.nvim',
+        event = { 'BufReadPre', 'BufNewFile' },
+        opts = { signcolumn = false },
+        keys = {
+            {
+                '<Space>gb',
+                function()
+                    for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do
+                        local buf = vim.api.nvim_win_get_buf(win)
+                        if vim.bo[buf].filetype == 'gitsigns-blame' then
+                            vim.api.nvim_win_close(win, true)
+                            return
+                        end
+                    end
+                    require('gitsigns').blame()
+                end,
+                desc = 'Toggle Git blame column',
+            },
+        },
+    },
+    {
         'nvim-neo-tree/neo-tree.nvim',
         branch = 'v3.x',
         cmd = 'Neotree',

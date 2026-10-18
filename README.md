@@ -43,6 +43,7 @@ configuration. Language-server formatting is available through
 | Key | Action |
 | --- | --- |
 | `Space e` | Toggle floating file tree, revealing the current file |
+| `Space g b` | Toggle Git blame column beside the current file |
 | `gd` / `gD` | Definition / declaration |
 | `gr` / `gi` | References / implementation |
 | `K` | Hover documentation |
@@ -60,6 +61,15 @@ directory, and `Esc` or `q` to close. `?` shows the available tree commands.
 You can also open it with `:Neotree float reveal`.
 
 All other editing and navigation use Neovim defaults.
+
+## Git blame
+
+In a Git-tracked file, press `Space g b` to open a blame column on the left.
+It shows commit, author, date, and message information and scrolls with the
+source file. Press the shortcut again to close it. In the blame column, `s`
+opens the selected commit and `Enter` shows the available actions.
+Wrapping is temporarily disabled while blame is open to keep lines aligned;
+closing the column restores it. Git is the only external dependency.
 
 ## Maintenance and recovery
 
