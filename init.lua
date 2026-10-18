@@ -38,6 +38,25 @@ require('lazy').setup({
         cmd = 'Telescope',
         keys = {
             {
+                '<Space>gs',
+                function()
+                    local actions = require 'telescope.actions'
+                    require('telescope.builtin').git_status {
+                        use_file_path = true,
+                        expand_dir = true,
+                        prompt_title = 'Uncommitted changes',
+                        layout_strategy = 'horizontal',
+                        layout_config = { width = 0.9, height = 0.85, preview_width = 0.6 },
+                        attach_mappings = function(_, map)
+                            map('i', '<Esc>', actions.close)
+                            map('n', 'q', actions.close)
+                            return true
+                        end,
+                    }
+                end,
+                desc = 'Browse uncommitted changes',
+            },
+            {
                 '<Space>gh',
                 function()
                     local actions = require 'telescope.actions'

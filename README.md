@@ -45,6 +45,7 @@ configuration. Language-server formatting is available through
 | `Space e` | Toggle floating file tree, revealing the current file |
 | `Space g b` | Toggle Git blame column beside the current file |
 | `Space g h` | Open the current file's Git history in a popup |
+| `Space g s` | Browse uncommitted files in a popup with diff previews |
 | `gd` / `gD` | Definition / declaration |
 | `gr` / `gi` | References / implementation |
 | `K` | Hover documentation |
@@ -84,6 +85,17 @@ Close the historical split with `:q` and run `:diffoff` in the remaining window
 to leave comparison mode. Browsing and comparing do not restore old content or
 change Git's checkout. This shows committed Git history, not snapshots of
 every save.
+
+## Uncommitted changes
+
+Press `Space g s` to open a searchable popup of the current repository's staged,
+unstaged, and untracked files. New directories are expanded into individual
+files. Select a file to preview its changes, then press `Enter` to open it.
+Use `Ctrl-n` / `Ctrl-p` to navigate and `Esc` to close; in normal mode, `q`
+also closes it. `Tab` stages or unstages the selected file.
+
+Save your edits first: this view shows Git's changes on disk, not unsaved buffer
+edits. Ignored files are excluded. No extra plugins or dependencies are needed.
 
 ## Maintenance and recovery
 
