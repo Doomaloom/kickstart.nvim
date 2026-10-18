@@ -1,6 +1,9 @@
 -- Editing defaults.
 vim.opt.number = true
 vim.opt.relativenumber = true
+vim.opt.numberwidth = 9
+-- Absolute numbers on the left, relative distances on the right.
+vim.opt.statuscolumn = "%s%C%{&nu && v:virtnum == 0 ? printf('%4d', v:lnum) : ''}" .. "%{&rnu && v:virtnum == 0 ? printf(' %3d ', v:relnum) : ' '}"
 vim.opt.expandtab = true
 vim.opt.tabstop = 4
 vim.opt.softtabstop = 4
