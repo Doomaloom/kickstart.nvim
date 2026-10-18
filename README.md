@@ -44,6 +44,7 @@ configuration. Language-server formatting is available through
 | --- | --- |
 | `Space e` | Toggle floating file tree, revealing the current file |
 | `Space g b` | Toggle Git blame column beside the current file |
+| `Space g h` | Open the current file's Git history in a popup |
 | `gd` / `gD` | Definition / declaration |
 | `gr` / `gi` | References / implementation |
 | `K` | Hover documentation |
@@ -70,6 +71,19 @@ source file. Press the shortcut again to close it. In the blame column, `s`
 opens the selected commit and `Enter` shows the available actions.
 Wrapping is temporarily disabled while blame is open to keep lines aligned;
 closing the column restores it. Git is the only external dependency.
+
+## File history
+
+Press `Space g h` in a Git-tracked file to browse its commits in a floating
+Telescope window, with a diff preview for the selected commit. Type to filter
+commits and use `Ctrl-n` / `Ctrl-p` to move through the list. `Enter` compares
+the selected revision with the current file in a vertical diff split.
+`Esc` closes the popup; in normal mode, `q` also closes it.
+
+Close the historical split with `:q` and run `:diffoff` in the remaining window
+to leave comparison mode. Browsing and comparing do not restore old content or
+change Git's checkout. This shows committed Git history, not snapshots of
+every save.
 
 ## Maintenance and recovery
 

@@ -33,6 +33,33 @@ vim.opt.rtp:prepend(lazypath)
 
 require('lazy').setup({
     {
+        'nvim-telescope/telescope.nvim',
+        dependencies = { 'nvim-lua/plenary.nvim' },
+        cmd = 'Telescope',
+        keys = {
+            {
+                '<Space>gh',
+                function()
+                    local actions = require 'telescope.actions'
+                    require('telescope.builtin').git_bcommits {
+                        use_file_path = true,
+                        prompt_title = 'File history',
+                        layout_strategy = 'horizontal',
+                        layout_config = { width = 0.9, height = 0.85, preview_width = 0.6 },
+                        attach_mappings = function(_, map)
+                            actions.select_default:replace(actions.select_vertical)
+                            map('i', '<Esc>', actions.close)
+                            map('n', 'q', actions.close)
+                            return true
+                        end,
+                    }
+                end,
+                desc = 'File Git history',
+            },
+        },
+        opts = {},
+    },
+    {
         'lewis6991/gitsigns.nvim',
         event = { 'BufReadPre', 'BufNewFile' },
         opts = { signcolumn = false },
