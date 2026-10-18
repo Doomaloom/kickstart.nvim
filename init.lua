@@ -84,6 +84,13 @@ require('lazy').setup({
         opts = { signcolumn = false },
         keys = {
             {
+                '<Space>gd',
+                function()
+                    require('gitsigns').diffthis('HEAD', { unified = true })
+                end,
+                desc = 'Toggle inline diff against HEAD',
+            },
+            {
                 '<Space>gb',
                 function()
                     for _, win in ipairs(vim.api.nvim_tabpage_list_wins(0)) do

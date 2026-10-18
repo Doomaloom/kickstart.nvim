@@ -46,6 +46,7 @@ configuration. Language-server formatting is available through
 | `Space g b` | Toggle Git blame column beside the current file |
 | `Space g h` | Open the current file's Git history in a popup |
 | `Space g s` | Browse uncommitted files in a popup with diff previews |
+| `Space g d` | Toggle an inline diff of the open file against the last commit |
 | `gd` / `gD` | Definition / declaration |
 | `gr` / `gi` | References / implementation |
 | `K` | Hover documentation |
@@ -96,6 +97,14 @@ also closes it. `Tab` stages or unstages the selected file.
 
 Save your edits first: this view shows Git's changes on disk, not unsaved buffer
 edits. Ignored files are excluded. No extra plugins or dependencies are needed.
+
+## Inline diff
+
+Press `Space g d` to toggle a unified diff directly in the current file.
+Added and changed lines are highlighted; removed lines appear as virtual lines
+beside their replacements. The comparison is against `HEAD`, so staged,
+unstaged, and unsaved edits are included. Press the same shortcut to return
+to normal editing. Viewing the diff does not change file contents or staging.
 
 ## Maintenance and recovery
 
