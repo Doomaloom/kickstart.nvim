@@ -1,7 +1,7 @@
 # Minimal Neovim
 
 Neovim 0.11.3+ with Gruvbox dark, relative line numbers, four-space indentation,
-soft word wrapping, and native LSP completion and diagnostics. Absolute line
+soft word wrapping that preserves indentation, and native LSP completion and diagnostics. Absolute line
 numbers appear to the left of relative line numbers; the current line's
 relative distance is `0`.
 
@@ -44,6 +44,8 @@ configuration. Language-server formatting is available through
 
 | Key | Action |
 | --- | --- |
+| `Esc` (normal mode) | Clear search highlighting |
+| `Ctrl-/` (normal / visual mode) | Toggle comments on the current line or selected lines |
 | `Space e` | Toggle floating file tree, revealing the current file |
 | `Space g b` | Toggle Git blame column beside the current file |
 | `Space g h` | Open the current file's Git history in a popup |

@@ -10,12 +10,23 @@ vim.opt.softtabstop = 4
 vim.opt.shiftwidth = 4
 vim.opt.wrap = true
 vim.opt.linebreak = true
+vim.opt.breakindent = true
 vim.opt.textwidth = 0
 vim.opt.termguicolors = true
 vim.opt.background = 'dark'
 vim.opt.completeopt = { 'menu', 'menuone', 'noselect', 'popup' }
 -- Keep Go's bundled filetype plugin from switching to literal tabs.
 vim.g.go_recommended_style = false
+
+-- Clear search highlighting with Escape.
+vim.keymap.set('n', '<Esc>', '<Cmd>nohlsearch<CR>', { desc = 'Clear search highlighting' })
+
+-- Toggle comments using Neovim's built-in commenting mappings.
+-- Some terminals send Ctrl+/ as Ctrl+_.
+for _, key in ipairs { '<C-/>', '<C-_>' } do
+    vim.keymap.set('n', key, 'gcc', { remap = true, desc = 'Toggle line comment' })
+    vim.keymap.set('x', key, 'gc', { remap = true, desc = 'Toggle selection comments' })
+end
 
 -- Bootstrap the plugin manager.
 local lazypath = vim.fn.stdpath 'data' .. '/lazy/lazy.nvim'
