@@ -1,7 +1,7 @@
 # Minimal Neovim
 
 Neovim 0.11.3+ with Gruvbox dark, relative line numbers, four-space indentation,
-soft word wrapping that preserves indentation, and native LSP completion and diagnostics. Absolute line
+soft word wrapping that preserves indentation, Blink autocomplete, and native LSP diagnostics. Absolute line
 numbers appear to the left of relative line numbers; the current line's
 relative distance is `0`.
 
@@ -58,11 +58,20 @@ configuration. Language-server formatting is available through
 | `gra` | Code action |
 | `Ctrl-Space` (insert mode) | Request completion |
 | `Ctrl-n` / `Ctrl-p` | Select next / previous completion |
+| `Tab` / `Shift-Tab` (insert mode) | Accept completion / move backward through snippet placeholders |
 | `Ctrl-y` / `Ctrl-e` | Accept / dismiss completion |
+| `Ctrl-k` (insert mode) | Toggle function signature help |
 | `[d` / `]d` | Previous / next diagnostic |
 | `Ctrl-w d` | Show diagnostic details |
 
-Completion also opens on server-defined trigger characters, such as `.`.
+Completion opens automatically as you type, suggesting variables, functions,
+members, and file paths. Language servers provide project-aware suggestions;
+words from the current buffer are also available, even without a language server.
+Use the arrow keys or `Ctrl-n` / `Ctrl-p` to select a suggestion and `Tab` or
+`Ctrl-y` to accept it. Documentation appears beside the menu, and function
+signature help shows parameters as you type arguments. Inside snippets, `Tab`
+moves to the next placeholder. `Enter` keeps its normal newline behavior.
+
 In the file tree, use `j` / `k` to move, `Enter` to open a file or expand a
 directory, and `Esc` or `q` to close. `?` shows the available tree commands.
 You can also open it with `:Neotree float reveal`.

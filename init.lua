@@ -146,12 +146,34 @@ require('lazy').setup({
         end,
     },
     {
+        'saghen/blink.cmp',
+        version = '1.*',
+        opts = {
+            keymap = {
+                preset = 'super-tab',
+                ['<C-y>'] = { 'select_and_accept', 'fallback' },
+            },
+            completion = {
+                documentation = { auto_show = true, auto_show_delay_ms = 250 },
+                trigger = { show_in_snippet = false },
+            },
+            sources = { default = { 'lsp', 'path', 'snippets', 'buffer' } },
+            signature = { enabled = true },
+            cmdline = { enabled = false },
+        },
+    },
+    {
         'neovim/nvim-lspconfig',
         dependencies = {
+            'saghen/blink.cmp',
             { 'mason-org/mason.nvim', opts = {} },
             'mason-org/mason-lspconfig.nvim',
         },
         config = function()
+            vim.lsp.config('*', {
+                capabilities = require('blink.cmp').get_lsp_capabilities(),
+            })
+
             local servers = {
                 'lua_ls',
                 'ts_ls',
@@ -180,15 +202,6 @@ require('lazy').setup({
             vim.api.nvim_create_autocmd('LspAttach', {
                 group = vim.api.nvim_create_augroup('minimal-lsp', { clear = true }),
                 callback = function(event)
-                    local client = vim.lsp.get_client_by_id(event.data.client_id)
-                    if client and client:supports_method('textDocument/completion', event.buf) then
-                        vim.lsp.completion.enable(true, client.id, event.buf, { autotrigger = true })
-                        vim.keymap.set('i', '<C-Space>', vim.lsp.completion.get, {
-                            buffer = event.buf,
-                            desc = 'LSP completion',
-                        })
-                    end
-
                     local function map(keys, action, desc)
                         vim.keymap.set('n', keys, action, { buffer = event.buf, desc = desc })
                     end
