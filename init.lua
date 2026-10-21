@@ -48,9 +48,47 @@ vim.opt.rtp:prepend(lazypath)
 require('lazy').setup({
     {
         'nvim-telescope/telescope.nvim',
-        dependencies = { 'nvim-lua/plenary.nvim' },
+        dependencies = {
+            'nvim-lua/plenary.nvim',
+            { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+        },
         cmd = 'Telescope',
         keys = {
+            { '<Space>sf', function() require('telescope.builtin').find_files() end, desc = 'Search files' },
+            { '<Space>sg', function() require('telescope.builtin').live_grep() end, desc = 'Search project text' },
+            { '<Space>sw', function() require('telescope.builtin').grep_string() end, desc = 'Search current word' },
+            { '<Space><Space>', function() require('telescope.builtin').buffers() end, desc = 'Search open buffers' },
+            { '<Space>s.', function() require('telescope.builtin').oldfiles() end, desc = 'Search recent files' },
+            { '<Space>sh', function() require('telescope.builtin').help_tags() end, desc = 'Search help' },
+            { '<Space>sk', function() require('telescope.builtin').keymaps() end, desc = 'Search keymaps' },
+            { '<Space>ss', function() require('telescope.builtin').builtin() end, desc = 'Search Telescope pickers' },
+            { '<Space>sd', function() require('telescope.builtin').diagnostics() end, desc = 'Search diagnostics' },
+            { '<Space>sr', function() require('telescope.builtin').resume() end, desc = 'Resume last search' },
+            {
+                '<Space>/',
+                function()
+                    require('telescope.builtin').current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
+                        winblend = 10,
+                        previewer = false,
+                    })
+                end,
+                desc = 'Fuzzy search current buffer',
+            },
+            {
+                '<Space>s/',
+                function()
+                    require('telescope.builtin').live_grep {
+                        grep_open_files = true,
+                        prompt_title = 'Live Grep in Open Files',
+                    }
+                end,
+                desc = 'Search text in open files',
+            },
+            {
+                '<Space>sn',
+                function() require('telescope.builtin').find_files { cwd = vim.fn.stdpath 'config' } end,
+                desc = 'Search Neovim config files',
+            },
             {
                 '<Space>gs',
                 function()
@@ -90,7 +128,17 @@ require('lazy').setup({
                 desc = 'File Git history',
             },
         },
-        opts = {},
+        opts = {
+            defaults = {
+                mappings = {
+                    i = { ['<Esc>'] = 'close' },
+                },
+            },
+        },
+        config = function(_, opts)
+            require('telescope').setup(opts)
+            require('telescope').load_extension('fzf')
+        end,
     },
     {
         'lewis6991/gitsigns.nvim',

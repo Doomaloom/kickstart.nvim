@@ -7,7 +7,8 @@ relative distance is `0`.
 
 ## Setup
 
-Install Git, curl, unzip, Node/npm, Python, Go, and the .NET 10 SDK or newer.
+Install Git, curl, unzip, ripgrep, Make, a C compiler, Node/npm, Python, Go,
+and the .NET 10 SDK or newer.
 Keep the runtimes and compilers your projects use installed as well.
 The .NET runtime alone is insufficient for installing `csharp-ls`.
 
@@ -47,6 +48,18 @@ configuration. Language-server formatting is available through
 | `Esc` (normal mode) | Clear search highlighting |
 | `Ctrl-/` (normal / visual mode) | Toggle comments on the current line or selected lines |
 | `Space e` | Toggle floating file tree, revealing the current file |
+| `Space s f` | Fuzzy find files in the working directory |
+| `Space s g` | Search project text with ripgrep |
+| `Space s w` | Search for the word under the cursor |
+| `Space Space` | Fuzzy find open buffers |
+| `Space s .` | Find recent files |
+| `Space /` | Fuzzy search lines in the current buffer |
+| `Space s /` | Search text in open files |
+| `Space s h` / `Space s k` | Search help / keymaps |
+| `Space s s` | Browse all Telescope pickers |
+| `Space s d` | Search diagnostics |
+| `Space s r` | Resume the last search |
+| `Space s n` | Find Neovim configuration files |
 | `Space g b` | Toggle Git blame column beside the current file |
 | `Space g h` | Open the current file's Git history in a popup |
 | `Space g s` | Browse uncommitted files in a popup with diff previews |
@@ -77,6 +90,12 @@ directory, and `Esc` or `q` to close. `?` shows the available tree commands.
 You can also open it with `:Neotree float reveal`.
 
 All other editing and navigation use Neovim defaults.
+
+Telescope searches start from Neovim's working directory (`:pwd`); open Neovim
+at your project root or use `:cd` to change it. File and buffer pickers use the
+native fzf matcher. Project text search uses ripgrep as you type; `Ctrl-Space`
+freezes those results so you can fuzzy filter them. Use `Ctrl-n` / `Ctrl-p`
+or arrow keys to navigate, `Enter` to open a result, and `Esc` to close.
 
 ## Git blame
 
